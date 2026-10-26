@@ -1,0 +1,149 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>التقنية الجينية والطب</title><meta name="color-scheme" content="light">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef6fc;--tx:#1d2b45;--mu:#5b6f8c;--a:#0a7ea8;--card:rgba(255,255,255,.72)}
+*{box-sizing:border-box;margin:0}html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:Tajawal,'Segoe UI',Tahoma,sans-serif}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.scene{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:56px 5vw 84px;opacity:0;pointer-events:none;transform:scale(.88);filter:blur(12px);transition:all .9s cubic-bezier(.2,.7,.2,1);overflow-y:auto;text-align:center}
+.scene.on{opacity:1;pointer-events:auto;transform:none;filter:none}.scene.past{transform:scale(1.25)}
+.scene>*{max-width:980px;width:100%}
+.scene[data-t=iris]{clip-path:circle(0% at 50% 65%);transition-duration:1.2s}.scene[data-t=iris].on{clip-path:circle(150% at 50% 50%)}
+.scene[data-t=wipe]{clip-path:inset(0 0 100% 0);transition-duration:1.1s}.scene[data-t=wipe].on{clip-path:inset(0)}
+.scene[data-t=flip]{transform:perspective(1200px) rotateY(55deg) scale(.88)}.scene[data-t=flip].on{transform:none}
+.scene[data-t=drift]{transform:translateX(-16vw) rotate(-3deg) scale(.95)}.scene[data-t=drift].on{transform:none}
+#sweep{position:fixed;inset:0;z-index:8;pointer-events:none;background:linear-gradient(105deg,transparent 30%,var(--sc,#fff) 50%,transparent 70%);opacity:0;transform:translateX(110%)}#sweep.run{animation:swp 1.1s ease-in-out}@keyframes swp{0%{transform:translateX(110%);opacity:.35}100%{transform:translateX(-110%);opacity:.35}}
+h1{font-size:clamp(2.2rem,8vw,5.5rem);font-weight:800;background:linear-gradient(90deg,var(--tx),var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(1.5rem,4.5vw,2.8rem);color:var(--a);margin-bottom:14px}p,li{font-size:clamp(1rem,2.2vw,1.35rem);line-height:1.9;color:var(--tx)}.mu{color:var(--mu)}
+b,.k{color:var(--a);font-weight:700}
+.rise>*{opacity:0;transform:translateY(24px);transition:all .7s}.on.rise>*{opacity:1;transform:none}
+.on.rise>*:nth-child(1){transition-delay:.3s}.on.rise>*:nth-child(2){transition-delay:.6s}.on.rise>*:nth-child(3){transition-delay:.9s}.on.rise>*:nth-child(4){transition-delay:1.2s}.on.rise>*:nth-child(5){transition-delay:1.5s}.on.rise>*:nth-child(6){transition-delay:1.8s}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin:14px 0}
+.card{background:var(--card);border:1px solid rgba(40,70,110,.15);box-shadow:0 6px 22px rgba(60,90,130,.12);border-radius:16px;padding:14px 16px;backdrop-filter:blur(8px);text-align:right;font-size:clamp(.95rem,2vw,1.15rem);line-height:1.7}
+.btn{font:inherit;font-weight:700;background:var(--a);color:#fff;border:0;border-radius:30px;padding:10px 26px;margin:6px;cursor:pointer;font-size:1.05rem}.btn.g{background:var(--card);color:var(--tx);border:1px solid rgba(40,70,110,.25)}.btn:disabled{opacity:.4}
+.opt{display:block;width:100%;text-align:right;margin:8px 0;background:var(--card);color:var(--tx);border:1px solid rgba(40,70,110,.25);border-radius:14px;padding:12px 16px;font:inherit;font-size:1.1rem;cursor:pointer}.opt.ok{background:#c4f0d5;border-color:#1f8a3f}.opt.no{background:#ffdccc;border-color:#c2570f}
+input.t{font:inherit;font-size:1.2rem;width:100%;padding:12px;border-radius:12px;border:1px solid var(--a);background:#fff;color:var(--tx);text-align:center}
+.fb{min-height:3em;margin:10px 0;font-size:1.1rem}.bar{height:8px;background:rgba(40,70,110,.12);border-radius:9px;overflow:hidden;margin-bottom:16px}.bar i{display:block;height:100%;background:var(--a);width:0;transition:width .6s}
+.flow{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;margin:16px 0}.node{background:var(--card);border:1px solid var(--a);border-radius:14px;padding:10px 14px;font-size:1rem;opacity:0;transform:scale(.6);transition:all .6s}.on .node{opacity:1;transform:none}.arr{color:var(--a);font-size:1.5rem;opacity:0;transition:opacity .6s}.on .arr{opacity:1}
+.flow>:nth-child(1){transition-delay:.4s}.flow>:nth-child(2){transition-delay:.7s}.flow>:nth-child(3){transition-delay:1s}.flow>:nth-child(4){transition-delay:1.3s}.flow>:nth-child(5){transition-delay:1.6s}.flow>:nth-child(6){transition-delay:1.9s}.flow>:nth-child(7){transition-delay:2.2s}.flow>:nth-child(8){transition-delay:2.5s}.flow>:nth-child(9){transition-delay:2.8s}.flow>:nth-child(10){transition-delay:3.1s}.flow>:nth-child(11){transition-delay:3.4s}
+.slots,.pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0;direction:rtl}.slot{min-width:44px;height:50px;border-bottom:3px solid var(--a);font-size:1.7rem;font-weight:700;display:flex;align-items:center;justify-content:center}.slot.sp{border:0;min-width:18px}
+.pool{background:var(--card);border-radius:18px;padding:16px}.ch{width:52px;height:52px;border-radius:12px;border:1px solid var(--a);background:#fff;color:var(--tx);font:inherit;font-size:1.6rem;font-weight:700;cursor:pointer}.ch:disabled{opacity:.25}
+.nav{position:fixed;bottom:0;inset-inline:0;display:flex;justify-content:center;align-items:center;gap:6px;padding:10px 10px calc(10px + env(safe-area-inset-bottom,0px));z-index:9;background:linear-gradient(transparent,rgba(238,246,252,.9))}
+.top{position:fixed;top:env(safe-area-inset-top,0px);inset-inline:0;display:flex;gap:6px;padding:10px;z-index:9}
+.ib{background:var(--card);color:var(--tx);border:1px solid rgba(40,70,110,.25);border-radius:50%;width:40px;height:40px;font-size:1.1rem;cursor:pointer}
+.dots{flex:1;display:flex;gap:4px;justify-content:center}.dots i{width:18px;height:4px;background:rgba(40,70,110,.18);border-radius:3px}.dots i.on{background:var(--a)}
+.pop{animation:pop .6s}@keyframes pop{40%{transform:scale(1.05);box-shadow:0 0 40px var(--a)}}.shake{animation:sh .4s}@keyframes sh{25%{transform:translateX(8px)}75%{transform:translateX(-8px)}}
+svg text{fill:#1d2b45;font-family:inherit;font-size:13px}svg rect{fill:rgba(255,255,255,.85)!important}.ln{stroke:var(--a);stroke-width:2;stroke-dasharray:6;animation:dash 2s linear infinite;fill:none}@keyframes dash{to{stroke-dashoffset:-24}}
+@media(prefers-reduced-motion:reduce){*{transition-duration:.01s!important;animation:none!important}}
+</style></head><body>
+<canvas id="cv"></canvas><div id="sweep"></div>
+<div class="top"><button class="ib" id="mute" title="كتم الصوت" aria-label="كتم الصوت">🔊</button><button class="ib" id="fs" title="ملء الشاشة" aria-label="ملء الشاشة">⛶</button><div class="dots" id="dots"></div></div>
+
+<section class="scene rise" style="--a:#5ee7ff"><h1>التقنية الجينية والطب</h1><p class="mu">حين تتحول الجينات إلى بروتينات تعالج الإنسان</p><div><button class="btn" id="start">ابدأ الرحلة ◀</button></div></section>
+
+<section class="scene rise" style="--a:#ffd166"><h2>أهداف التعلم</h2><div class="grid"><div class="card">🧬 أوضّح كيف توفر التقنية الجينية منتجات خاصة بالإنسان بتقنية DNA معاد التركيب.</div><div class="card">🏭 أذكر مزايا استخدام البكتيريا والخمائر وخلايا الثدييات في إنتاج البروتينات.</div><div class="card">💉 أبيّن إنتاج الأنسولين ودوره ومرض السكري.</div><div class="card">🩸 أصف إنتاج العامل الثامن وعلاقته بالهيموفيليا.</div><div class="card">🛡️ أفسّر دور إنزيم ADA وعلاقة خلل جينه بمرض SCID.</div></div></section>
+
+<section class="scene" id="g1" style="--a:#c792ff"><div><h2>تحدّي الذاكرة العلمية</h2><div class="bar"><i id="b1"></i></div><div id="q1"></div></div></section>
+
+<section class="scene rise" style="--a:#5ee7ff"><h2>1 · ما التقنية الجينية في الطب؟</h2><p>توفر التقنية الجينية إمكانية صنع <b>منتجات خاصة بالإنسان</b> بواسطة تقنيات <b>DNA معاد التركيب</b>، مثل أنواع مختلفة من الإنسولين معاد التركيب.</p><p>تُستخدم في الطب في عدة استخدامات أبرزها:</p><div class="grid"><div class="card">🔬 <b>الفحص الجيني</b></div><div class="card">🧪 <b>إنتاج بروتينات كعلاجات</b> لبعض الحالات</div></div><p class="mu">من أمثلتها ثلاثة بروتينات بشرية: الإنسولين، والعامل الثامن (بروتين تخثر الدم)، وإنزيم ADA.</p></section>
+
+<section class="scene" style="--a:#38e1c6"><h2>2 · مزايا استخدام البكتيريا والخمائر وخلايا الثدييات</h2><div class="flow"><span class="node">🧬 جين بشري</span><span class="arr">◀</span><span class="node">🦠 خلية معدّلة جينيًا</span><span class="arr">◀</span><span class="node">⚙️ إنتاج البروتين</span><span class="arr">◀</span><span class="node">💊 علاج</span></div>
+<div class="grid"><div class="card">🥣 للخلايا متطلبات غذائية بسيطة.</div><div class="card">📦 يمكن تكوين كميات كبيرة من المنتجات.</div><div class="card">🏢 لا تتطلب منشآت الإنتاج مساحة كبيرة.</div><div class="card">🌍 يمكن تنفيذ الإنتاج في أي مكان في العالم تقريبًا.</div><div class="card">🩸 لا يُستخلص البروتين من مصادر حيوانية أو بجمع دم من متبرعين؛ فيقل وجود المشكلات العملية أو الأخلاقية.</div></div></section>
+
+<section class="scene" style="--a:#ff9f68"><h2>3 · المثال الأول: الإنسولين</h2><div class="grid"><div class="card"><b>دوره:</b> خفض مستوى جلوكوز الدم إلى المستوى الطبيعي.</div><div class="card"><b>المرض عند خلل إنتاجه أو عمله:</b> السكري.<div style="text-align:center"><svg viewBox="0 0 100 100" width="92" height="92" aria-label="جهاز قياس السكري"><rect x="45" y="4" width="10" height="16" rx="2" fill="#fff" stroke="#1d2b45" stroke-width="2.5"/><rect x="28" y="18" width="44" height="74" rx="12" fill="#5ec8e8" stroke="#1d2b45" stroke-width="3"/><rect x="35" y="27" width="30" height="22" rx="5" fill="#eafff3" stroke="#1d2b45" stroke-width="2.5"/><path d="M50 30c5 7 7 10 7 13a7 7 0 0 1-14 0c0-3 2-6 7-13z" fill="#e63946"/><circle cx="50" cy="64" r="7" fill="#ffd166" stroke="#1d2b45" stroke-width="2.5"/><path d="M44 79q6 6 12 0" fill="none" stroke="#1d2b45" stroke-width="2.5" stroke-linecap="round"/></svg></div></div></div>
+<div class="flow"><span class="node">🧬 جين الإنسولين البشري</span><span class="arr">◀</span><span class="node">🦠 بكتيريا / خميرة / خلايا حيوان معدّلة جينيًا</span><span class="arr">◀</span><span class="node">🧫 إنسولين معاد التركيب</span><span class="arr">◀</span><span class="node">💉 علاج السكري</span></div>
+<p class="mu">وهذا أفضل من استخلاصه من الماشية؛ لأن ذلك يعتمد على توفر البنكرياس الحيواني، وقد لا يكون مطابقًا كليًا للإنسولين البشري.</p></section>
+
+<section class="scene" style="--a:#ff6b8a"><h2>4 · المثال الثاني: العامل الثامن (VIII)</h2><p>بروتين ضروري <b>لتخثر الدم</b>. يشفّره الجين البشري <b>F8</b> في الكروموسوم X، وطفرة فيه تؤدي إلى <b>الهيموفيليا</b> (نزف الدم).</p><div style="text-align:center"><svg viewBox="0 0 100 100" width="92" height="92" aria-label="يد تنزف"><g fill="#ffcf9f" stroke="#1d2b45" stroke-width="3" stroke-linejoin="round"><rect x="26" y="44" width="48" height="38" rx="14"/><rect x="26" y="14" width="10" height="38" rx="5"/><rect x="38" y="8" width="10" height="42" rx="5"/><rect x="50" y="10" width="10" height="40" rx="5"/><rect x="62" y="16" width="10" height="36" rx="5"/><rect x="72" y="52" width="22" height="11" rx="5.5" transform="rotate(-20 72 52)"/></g><path d="M40 60l6-4 5 6 6-5 5 6" fill="none" stroke="#c4294f" stroke-width="4" stroke-linecap="round"/><path d="M46 68c3 5 4 8 4 10a4 4 0 0 1-8 0c0-2 1-5 4-10z" fill="#e63946"/><path d="M60 80c2 4 3 6 3 8a3 3 0 0 1-6 0c0-2 1-4 3-8z" fill="#e63946"/></svg></div>
+<div class="flow"><span class="node"><svg viewBox="0 0 100 100" width="70" height="70" aria-label="هامستر"><g stroke="#1d2b45" stroke-width="3"><circle cx="26" cy="28" r="11" fill="#f3b27a"/><circle cx="74" cy="28" r="11" fill="#f3b27a"/><circle cx="26" cy="28" r="5" fill="#ffb3c1" stroke="none"/><circle cx="74" cy="28" r="5" fill="#ffb3c1" stroke="none"/><ellipse cx="50" cy="58" rx="38" ry="32" fill="#f3c27a"/><ellipse cx="50" cy="70" rx="22" ry="18" fill="#fff4dd" stroke="none"/></g><circle cx="38" cy="50" r="5" fill="#1d2b45"/><circle cx="62" cy="50" r="5" fill="#1d2b45"/><circle cx="39.5" cy="48.5" r="1.8" fill="#fff"/><circle cx="63.5" cy="48.5" r="1.8" fill="#fff"/><circle cx="26" cy="62" r="6" fill="#ffb3c1"/><circle cx="74" cy="62" r="6" fill="#ffb3c1"/><ellipse cx="50" cy="60" rx="4" ry="3" fill="#e0607e"/><path d="M50 63v4M44 69q6 5 12 0" fill="none" stroke="#1d2b45" stroke-width="2.5" stroke-linecap="round"/></svg><br>🧬 إدخال F8 في خلايا كلية ومبيض الهامستر</span><span class="arr">◀</span><span class="node">🛢️ زراعتها في أجهزة تخمير</span><span class="arr">◀</span><span class="node">♻️ تنتج العامل الثامن باستمرار</span><span class="arr">◀</span><span class="node">🧪 استخلاص وتنقية</span><span class="arr">◀</span><span class="node">💉 حقن المصاب</span></div>
+<div class="card">يحتاج المصاب إلى حقن منتظمة منه. وكان يُؤخذ سابقًا من <b>دم المتبرعين</b> الذي قد ينقل عدوى مثل <b>HIV</b>، أما المعاد التركيب فيخلو من هذه المخاطر.</div></section>
+
+<section class="scene" style="--a:#7cf29a"><h2>5 · المثال الثالث: إنزيم أدينوسين دي أمينيز (ADA)</h2>
+<div class="flow"><span class="node">🧬 طفرة في جين ADA (كروموسوم 20)</span><span class="arr">◀</span><span class="node">⚗️ نقص إنزيم ADA</span><span class="arr">◀</span><span class="node">🛡️ مرض SCID (نقص المناعة المشترك الحاد)</span></div>
+<div class="grid"><div class="card"><b>عمل الإنزيم:</b> ينزع الأمين من الأدينوسين منقوص الأكسجين ضمن عملية أيض DNA في الخلايا.</div><div class="card"><b>عند غيابه:</b> للأدينوسين منقوص الأكسجين تأثير سام في الخلايا اللمفاوية التائية (T)، فيولد الطفل بجهاز مناعة ضعيف.</div></div>
+<div class="card"><b>العلاج:</b> حقن منتظمة من ADA. يُستخلص من الماشية، ويُصنع أيضًا ببكتيريا <i>E. coli</i> المعدلة جينيًا ثم يُنقّى. وقد كُشفت حالات حديثًا في بعض محافظات سلطنة عمان.</div></section>
+
+<section class="scene" style="--a:#5ee7ff"><h2>الملخص البصري</h2>
+<svg viewBox="0 0 640 400" style="width:100%;max-width:900px"><g class="ln"><path d="M320 70V120M320 150C320 190 120 170 110 230M320 150V240M320 150C320 190 520 170 530 230M320 260V320"/></g>
+<g text-anchor="middle"><rect x="220" y="25" width="200" height="45" rx="14" fill="#16345e" stroke="#5ee7ff"/><text x="320" y="53">التقنية الجينية · DNA معاد التركيب</text>
+<rect x="220" y="120" width="200" height="40" rx="14" fill="#16345e" stroke="#38e1c6"/><text x="320" y="145">إنتاج بروتينات علاجية</text>
+<rect x="20" y="230" width="180" height="60" rx="14" fill="#4a2a14" stroke="#ff9f68"/><text x="110" y="256">الإنسولين</text><text x="110" y="276">← السكري</text>
+<rect x="230" y="240" width="180" height="60" rx="14" fill="#4a1426" stroke="#ff6b8a"/><text x="320" y="266">العامل الثامن</text><text x="320" y="286">← الهيموفيليا</text>
+<rect x="440" y="230" width="180" height="60" rx="14" fill="#14402a" stroke="#7cf29a"/><text x="530" y="256">إنزيم ADA</text><text x="530" y="276">← SCID</text>
+<rect x="150" y="320" width="340" height="50" rx="14" fill="#16345e" stroke="#ffd166"/><text x="320" y="342">المزايا: غذاء بسيط · كميات كبيرة · مساحة صغيرة</text><text x="320" y="360">إنتاج في أي مكان · بلا دم متبرعين</text></g></svg></section>
+
+<section class="scene" id="g2" style="--a:#ffd166"><div><h2>فكّ الشفرة الجينية</h2><div class="bar"><i id="b2"></i></div><div id="q2"></div></div></section>
+
+<section class="scene rise" style="--a:#5ee7ff"><h2>الخاتمة</h2><p>من جزيء DNA إلى 🧬 بروتين 🧫 خلية 💉 علاج:</p><p>تتيح التقنية الجينية إنتاج <b>بروتينات بشرية علاجية</b> مثل الإنسولين والعامل الثامن وADA بكميات كبيرة وأمان أكبر.</p><p class="mu">«الجينات لغة الحياة، والعلم يتعلّم كيف يكتب بها العلاج.»</p><div><button class="btn" id="home">العودة إلى البداية</button><button class="btn g" id="sum">إعادة عرض الملخص</button></div></section>
+
+<div class="nav"><button class="btn g" id="prev">▶ السابق</button><button class="btn" id="next">التالي ◀</button></div>
+<script>
+const $=s=>document.querySelector(s),S=[...document.querySelectorAll('.scene')];let cur=-1,muted=false,ac=null;
+const dots=$('#dots');S.forEach(()=>dots.append(document.createElement('i')));
+function snd(ok){if(muted)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();[ok?[523,659,784]:[330,262]].flat().forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.type=ok?'sine':'triangle';o.connect(g);g.connect(ac.destination);const t=ac.currentTime+i*.12;g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.25);o.start(t);o.stop(t+.3)})}catch(e){}}
+const ACC=['#0a7ea8','#b57a00','#7a4bc4','#0a7ea8','#0f8a72','#c2570f','#c4294f','#1f8a3f','#2563b5','#a87400','#0a7ea8'],TR=['zoom','drift','iris','wipe','flip','iris','wipe','drift','flip','iris','zoom'];S.forEach((s,k)=>s.dataset.t=TR[k]);
+function go(i){i=Math.max(0,Math.min(S.length-1,i));const sw=$('#sweep');sw.style.setProperty('--sc',ACC[i]);sw.classList.remove('run');void sw.offsetWidth;sw.classList.add('run');S[i].style.setProperty('--a',ACC[i]);S.forEach((s,k)=>{s.classList.toggle('on',k===i);s.classList.toggle('past',k<i)});[...dots.children].forEach((d,k)=>d.classList.toggle('on',k<=i));cur=i;zoomT=0;$('#prev').disabled=i==0;$('#next').disabled=i==S.length-1;if(i==2)G1.init();if(i==9)G2.init()}
+$('#next').onclick=()=>go(cur+1);$('#prev').onclick=()=>go(cur-1);$('#start').onclick=()=>go(1);$('#home').onclick=()=>go(0);$('#sum').onclick=()=>go(8);
+addEventListener('keydown',e=>{if(e.target.tagName=='INPUT')return;if(e.key=='ArrowLeft')go(cur+1);if(e.key=='ArrowRight')go(cur-1)});
+$('#mute').onclick=()=>{muted=!muted;$('#mute').textContent=muted?'🔇':'🔊'};
+$('#fs').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();
+const norm=s=>s.replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/\s+/g,'');
+/* Game 1 */
+const G1={Q:[{t:'ما العوامل المؤثرة في حركة قطع DNA؟',w:1,e:'الإجابة: الشحنة والحجم.'},
+{t:'علّلي: بعد تحضير الهلام، يُصب محلول منظم في الخزان بحيث يغطي الهلام.',o:['لتوفير قيمة pH ثابتة.','لزيادة حجم قطع DNA.','لإيقاف حركة قطع DNA.','لتغيير شحنة قطع DNA.'],a:0,e:'المحلول المنظم يوفر pH ثابتًا.'},
+{t:'وضّحي العلاقة بين حجم الجزيئات وسرعة الحركة.',o:['كلما كانت قطع DNA أقصر أو أصغر، تحركت أسرع وقطعت مسافة أكبر في الظروف نفسها.','كلما كانت قطع DNA أكبر، تحركت أسرع دائمًا.','لا توجد علاقة بين الحجم والحركة.','تتحرك جميع قطع DNA المسافة نفسها دائمًا.'],a:0,e:'القطع الأصغر تتحرك أسرع في الهلام.'},
+{t:'اذكري بعض استخدامات نتائج الفصل الكهربائي الهلامي.',o:['الكشف عن المجرمين واختبارات النسب، مثل الأبوة والأمومة.','قياس ضغط الدم فقط.','قياس درجة حرارة الجسم.','تحديد نسبة الأكسجين في الهواء.'],a:0,e:'يُستخدم في الكشف الجنائي واختبارات النسب.'}],
+init(){this.i=0;this.s=0;this.pos=[0,1,2,3].sort(()=>Math.random()-.5);this.show()},
+show(){const q0=this.Q[this.i],el=$('#q1');let q=q0;if(!q0.w){const ord=q0.o.map((x,k)=>k).filter(k=>k!=q0.a).sort(()=>Math.random()-.5);ord.splice(this.pos[this.i-1],0,q0.a);q={...q0,o:ord.map(k=>q0.o[k]),a:this.pos[this.i-1]}}this.done=false;$('#b1').style.width=this.i/4*100+'%';
+el.innerHTML=`<p class="mu">السؤال ${this.i+1} من 4 · النقاط: ${this.s}</p><p><b>${q.t}</b></p>`+(q.w?`<input class="t" id="ans" placeholder="اكتبي إجابتك"><div><button class="btn" id="chk">تحقّق من الإجابة</button></div>`:q.o.map((x,k)=>`<button class="opt" data-k="${k}">${'أبجد'[k]}. ${x}</button>`).join(''))+`<div class="fb" id="fb1"></div><div id="nx1"></div>`;
+if(q.w)$('#chk').onclick=()=>this.ans(norm($('#ans').value).includes('شحن')&&norm($('#ans').value).includes('حجم'));
+else el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(this.done)return;const k=+b.dataset.k;b.classList.add(k==q.a?'ok':'no');el.querySelectorAll('.opt')[q.a].classList.add('ok');this.ans(k==q.a)})},
+ans(ok){if(this.done)return;this.done=true;const q=this.Q[this.i],f=$('#fb1');if(ok){this.s++;f.innerHTML='✅ أحسنتِ! إجابة صحيحة';$('#g1>div').classList.add('pop')}else{f.innerHTML='💡 ليست دقيقة تمامًا. '+q.e;$('#g1>div').classList.add('shake')}snd(ok);setTimeout(()=>$('#g1>div').classList.remove('pop','shake'),700);
+const last=this.i==3;$('#nx1').innerHTML=`<button class="btn" id="n1">${last?'عرض النتيجة':'السؤال التالي'}</button>`;$('#n1').onclick=()=>{if(last)this.end();else{this.i++;this.show()}}},
+end(){$('#b1').style.width='100%';$('#q1').innerHTML=`<h2>نتيجتك: ${this.s} / 4</h2><p>${this.s>=3?'ذاكرة علمية رائعة! 🌟':'بداية جيدة، والدرس سيعزز معرفتك 📘'}</p><button class="btn" id="les">الانتقال إلى الدرس ◀</button><button class="btn g" id="rp">إعادة اللعبة</button>`;$('#les').onclick=()=>go(3);$('#rp').onclick=()=>this.init()}};
+/* Game 2 */
+const G2={Q:[{t:'تُستخدم التقنية الجينية في الطب في بعض الاستخدامات، منها؟',a:'الفحص الجيني'},{t:'ما المرض المرتبط بخلل الأنسولين أو نقصه؟',a:'السكري'},{t:'في أي أجهزة تُزرع خلايا كلية ومبيض الهامستر لإنتاج العامل الثامن؟',a:'أجهزة التخمير'},{t:'أكملي: يحفّز إنزيم أدينوسين دي أمينيز نزع الأمين من الأدينوسين منقوص الأكسجين كجزء من عملية ......',a:'الأيض'}],
+init(){this.i=0;this.s=0;this.show()},
+show(){const q=this.Q[this.i],L=[...q.a.replace(/ /g,'')].map((c,k)=>({c,k}));for(let j=L.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[L[j],L[r]]=[L[r],L[j]]}
+this.L=L;this.pick=[];this.tries=0;this.done=false;$('#b2').style.width=this.i/4*100+'%';
+$('#q2').innerHTML=`<p class="mu">السؤال ${this.i+1} من 4 · النقاط: ${this.s}</p><p><b>${q.t}</b></p><div class="slots" id="sl"></div><div class="pool" id="pl">${L.map((x,n)=>`<button class="ch" data-n="${n}">${x.c}</button>`).join('')}</div><div><button class="btn g" id="del">حذف آخر حرف</button><button class="btn g" id="clr">مسح الإجابة</button><button class="btn" id="ck">تحقّق من الإجابة</button></div><div class="fb" id="fb2"></div><div id="nx2"></div>`;
+document.querySelectorAll('.ch').forEach(b=>b.onclick=()=>{if(this.done)return;this.pick.push(+b.dataset.n);this.draw()});$('#del').onclick=()=>{if(!this.done){this.pick.pop();this.draw()}};$('#clr').onclick=()=>{if(!this.done){this.pick=[];this.draw()}};$('#ck').onclick=()=>this.check();this.draw()},
+draw(){const a=this.Q[this.i].a;let n=0;$('#sl').innerHTML=[...a].map(c=>c==' '?'<span class="slot sp"></span>':`<span class="slot">${this.pick[n]!=null?this.L[this.pick[n++]].c:(n++,'')}</span>`).join('');document.querySelectorAll('.ch').forEach((b,k)=>b.disabled=this.pick.includes(k))},
+check(){if(this.done||!this.pick.length)return;const q=this.Q[this.i],got=this.pick.map(n=>this.L[n].c).join(''),ok=got==q.a.replace(/ /g,''),f=$('#fb2');this.tries++;snd(ok);
+if(ok){this.done=true;this.s++;f.textContent='✅ ممتاز! إجابة صحيحة';$('#g2>div').classList.add('pop')}
+else if(this.tries<2){f.textContent='💡 قريبة! جرّبي مرة أخرى';$('#g2>div').classList.add('shake');this.pick=[];setTimeout(()=>this.draw(),400)}
+else{this.done=true;f.textContent='الإجابة الصحيحة: '+q.a;$('#g2>div').classList.add('shake')}
+setTimeout(()=>$('#g2>div').classList.remove('pop','shake'),700);
+if(this.done){const last=this.i==3;$('#nx2').innerHTML=`<button class="btn" id="n2">${last?'عرض النتيجة':'التالي'}</button>`;$('#n2').onclick=()=>{if(last)this.end();else{this.i++;this.show()}}}},
+end(){$('#b2').style.width='100%';const s=this.s;$('#q2').innerHTML=`<h2>الدرجة النهائية: ${s} / 4</h2><p>الإجابات الصحيحة: ${s}</p><p>${s==4?'مذهل! أنتِ عالمة جينات 🧬':s>=2?'أداء جيد، راجعي الملخص وستتقنينه 👏':'لا بأس، أعيدي الملخص ثم حاولي مجددًا 💪'}</p><button class="btn" id="rp2">إعادة اللعب</button><button class="btn g" id="fin">الخاتمة ◀</button>`;$('#rp2').onclick=()=>this.init();$('#fin').onclick=()=>go(10)}};
+/* Background: pseudo-3D rotating DNA + floating cells */
+const cv=$('#cv'),c=cv.getContext('2d');let W,H,t=0,zoomT=0;const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function rs(){const d=Math.min(devicePixelRatio||1,2);W=cv.width=innerWidth*d;H=cv.height=innerHeight*d}rs();addEventListener('resize',rs);
+const cells=[...Array(18)].map(()=>({x:Math.random(),y:Math.random(),r:8+Math.random()*30,s:Math.random()*.3+.1}));
+function oldFrame(){t+=rm?0:.012;zoomT=Math.min(zoomT+.004,1);const strong=cur==0||cur==10,al=strong?1:.22,zm=strong?1+zoomT*(cur==0?1.4:0):1;
+const g=c.createRadialGradient(W/2,H/2,0,W/2,H/2,W*.7);g.addColorStop(0,'#0e2247');g.addColorStop(1,'#050b1a');c.fillStyle=g;c.fillRect(0,0,W,H);
+cells.forEach(e=>{const y=((e.y-t*e.s*.3)%1+1)%1;c.beginPath();c.arc(e.x*W,y*H,e.r*(W/1200)*(strong?zoomT+.3:.6),0,7);c.fillStyle=`rgba(255,110,140,${.05+.07*al})`;c.fill()});
+const N=46,cx=W/2,sc=Math.min(W,H)/ (strong?3.4:5.5)*zm;
+for(let k=0;k<N;k++){const y=(k/N-.5)*H*1.6,a=k*.38+t*2;[0,1].forEach(s=>{const ang=a+s*Math.PI,x=cx+Math.cos(ang)*sc*.5*(1),z=Math.sin(ang),r=(3+z*1.8)*(W/1000)*zm;c.beginPath();c.arc(x,H/2+y,Math.max(r,1),0,7);c.fillStyle=s?`rgba(94,231,255,${(.5+.4*z)*al})`:`rgba(255,209,102,${(.5+.4*z)*al})`;c.fill()});
+if(k%2==0){const x1=cx+Math.cos(a)*sc*.5,x2=cx-Math.cos(a)*sc*.5;c.strokeStyle=`rgba(255,255,255,${.18*al})`;c.lineWidth=2;c.beginPath();c.moveTo(x1,H/2+y);c.lineTo(x2,H/2+y);c.stroke()}}
+requestAnimationFrame(frame)}
+const PAL=[['#e9f6ff','#cfe6fb'],['#fff8e6','#ffe9bf'],['#f1ecff','#ddd3fb'],['#e6f9ff','#c9eefa'],['#e8f9f3','#c7efe2'],['#fff1e6','#ffd9bd'],['#ffeaf0','#ffc9d6'],['#eafbea','#cdf0d3'],['#eaf6ff','#d6e7fb'],['#fff8e1','#ffe7a8'],['#e9f6ff','#d8e4fb']];
+const rgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));let col=PAL[0].map(rgb);
+const P=[...Array(40)].map(()=>({x:Math.random(),y:Math.random(),r:Math.random(),s:.2+Math.random()}));
+const dot=(x,y,r,f)=>{c.beginPath();c.arc(x,y,Math.max(r,.5),0,7);c.fillStyle=f;c.fill()},wrap=v=>(v%1+1)%1;
+const helix=(al,zm)=>{const N=46,sc=Math.min(W,H)/3.4*zm;for(let k=0;k<N;k++){const y=(k/N-.5)*H*1.6,a=k*.38+t*2;[0,1].forEach(s=>{const z=Math.sin(a+s*Math.PI),x=W/2+Math.cos(a+s*Math.PI)*sc*.5;dot(x,H/2+y,(3+z*1.8)*(W/1000)*zm,(s?'rgba(10,126,168,':'rgba(224,150,0,')+(.5+.4*z)*al+')')});if(k%2==0){c.strokeStyle='rgba(40,70,110,'+.2*al+')';c.lineWidth=2;c.beginPath();c.moveTo(W/2+Math.cos(a)*sc*.5,H/2+y);c.lineTo(W/2-Math.cos(a)*sc*.5,H/2+y);c.stroke()}}};
+const SC=[
+(u)=>{helix(1,1+zoomT*1.2);P.slice(0,16).forEach(p=>dot(p.x*W,wrap(p.y-t*p.s*.05)*H,12*u*(.5+p.r),'rgba(240,120,150,'+.3*zoomT+')'))},
+(u)=>P.slice(0,30).forEach(p=>{const x=p.x*W,y=wrap(p.y-t*p.s*.04)*H;dot(x,y,(4+p.r*14)*u,'rgba(230,170,40,.2)');c.strokeStyle='rgba(181,122,0,.25)';c.lineWidth=1.5;c.beginPath();c.arc(x,y,(6+p.r*18)*u,0,7);c.stroke()}),
+(u)=>{const x0=W*.1,w=W*.8,y0=H*.12,h=H*.78,L=7,pr=(t*.12)%1,lw=w/L;c.fillStyle='rgba(255,255,255,.4)';c.fillRect(x0,y0,w,h);c.strokeStyle='rgba(122,75,196,.35)';c.strokeRect(x0,y0,w,h);for(let l=0;l<L;l++){const x=x0+(l+.5)*lw;c.fillStyle='rgba(122,75,196,.35)';c.fillRect(x-lw*.3,y0+4,lw*.6,8*u);for(let b=0;b<4;b++){const f=[.22,.42,.65,.9][b]*(.85+((l*7+b*3)%5)/20);c.fillStyle='rgba(122,75,196,'+(.25+b*.1)+')';c.fillRect(x-lw*.3,y0+16*u+f*h*.8*pr,lw*.6,(5+b)*u)}}},
+(u)=>helix(.4,1),
+(u)=>P.slice(0,18).forEach((p,i)=>{const x=wrap(p.x+Math.sin(t*p.s+i)*.03+t*.004*p.s)*W,y=wrap(p.y-t*.01*p.s)*H,r=(9+p.r*14)*u*(1+.12*Math.sin(t*2+i));c.save();c.translate(x,y);c.rotate(i+t*.2*p.s);c.scale(2.2,1);dot(0,0,r,'rgba(15,138,114,.25)');dot(0,0,r*.5,'rgba(15,138,114,.2)');c.restore()}),
+(u)=>P.slice(0,24).forEach((p,i)=>{const x=p.x*W+Math.sin(t+i)*20*u,y=wrap(p.y+t*.015*p.s)*H,r=(12+p.r*18)*u;c.beginPath();for(let k=0;k<6;k++){const a=k*Math.PI/3+t*.2*(i%2?1:-1);c.lineTo(x+Math.cos(a)*r,y+Math.sin(a)*r)}c.closePath();c.strokeStyle='rgba(194,87,15,.4)';c.lineWidth=2;c.stroke();c.fillStyle='rgba(255,170,90,.15)';c.fill()}),
+(u)=>{c.strokeStyle='rgba(196,41,79,.3)';c.lineWidth=6*u;[.24,.78].forEach(f=>{c.beginPath();c.moveTo(0,H*f);c.bezierCurveTo(W*.3,H*(f+.05),W*.6,H*(f-.05),W,H*f);c.stroke()});P.forEach((p,i)=>{const x=wrap(p.x-t*p.s*.06)*W,y=H*(.32+.36*p.y)+Math.sin(t*2+i)*8*u;if(i%5){dot(x,y,(14+p.r*8)*u,'rgba(214,60,90,.4)');dot(x,y,6*u,'rgba(255,190,205,.5)')}else dot(x,y,5*u,'rgba(230,170,40,.6)')})},
+(u)=>P.slice(0,10).forEach((p,i)=>{const x=p.x*W+Math.sin(t*.5+i)*30*u,y=p.y*H+Math.cos(t*.4+i)*30*u,r=(28+p.r*34)*u*(1+.05*Math.sin(t*2+i));dot(x,y,r,'rgba(31,138,63,.15)');dot(x,y,r*.55,'rgba(31,138,63,.28)');for(let k=0;k<5;k++){const a=t*.8+k*1.26+i;dot(x+Math.cos(a)*r*1.35,y+Math.sin(a)*r*1.35,3*u,'rgba(196,41,79,.45)')}}),
+(u)=>{const N=P.slice(0,18).map((p,i)=>[p.x*W+Math.sin(t*.4*p.s+i)*40*u,p.y*H+Math.cos(t*.3*p.s+i)*40*u]);c.lineWidth=1.5;N.forEach((a,i)=>N.forEach((b,j)=>{const d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(j>i&&d<W*.2){c.strokeStyle='rgba(37,99,181,'+.35*(1-d/(W*.2))+')';c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}}));N.forEach(a=>dot(a[0],a[1],5*u,'rgba(37,99,181,.4)'))},
+(u)=>{c.textAlign='center';P.forEach((p,i)=>{c.font='700 '+(22+p.r*30)*u+'px Tajawal,sans-serif';c.fillStyle='rgba(168,116,0,.2)';c.fillText('ATGC'[i%4],p.x*W,wrap(p.y+t*.02*p.s)*H)})},
+(u)=>{helix(1,1);c.textAlign='center';c.font=34*u+'px sans-serif';['🧬','💉','🧫','🩸','🛡️','🧪','💊','🦠'].forEach((e,i)=>{const a=t*.5+i*.785;c.fillText(e,W/2+Math.cos(a)*W*.32,H/2+Math.sin(a)*H*.3)})}
+];
+function frame(){t+=rm?0:.012;zoomT=Math.min(zoomT+.004,1);const tg=PAL[Math.max(cur,0)].map(rgb);col=col.map((a,i)=>a.map((v,k)=>v+(tg[i][k]-v)*.04));const g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgb('+col[0].map(Math.round)+')');g.addColorStop(1,'rgb('+col[1].map(Math.round)+')');c.fillStyle=g;c.fillRect(0,0,W,H);if(SC[cur])SC[cur](Math.min(W,H)/700);requestAnimationFrame(frame)}
+frame();go(0);
+</script></body></html>
